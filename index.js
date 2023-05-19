@@ -33,18 +33,13 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-    app.get("/mytoys", async (req, res) => {
-      const cursor = productCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    });
 
-    app.get("/products/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await productCollection.findOne(query);
-      res.send(result);
-    });
+    // app.get("/products/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await productCollection.findOne(query);
+    //   res.send(result);
+    // });
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -59,6 +54,14 @@ async function run() {
         projection: { _id: 0, title: 1, imdb: 1 },
       };
       const result = await productCollection.findOne(query);
+      res.send(result);
+    });
+    //  mytoys
+    app.get("/mytoys", async (req, res) => {
+      console.log(req.query);
+      const result = await toysCollection.find().toArray();
+      res.send(result);
+
       res.send(result);
     });
 
