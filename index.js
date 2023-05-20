@@ -34,6 +34,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
     // app.get("/products/:id", async (req, res) => {
     //   const id = req.params.id;
     //   const query = { _id: new ObjectId(id) };
@@ -43,25 +49,21 @@ async function run() {
     app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      const result = await productCollection.findOne(query);
-      res.send(result);
-    });
-    app.get("/products/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
       const options = {
         // Include only the `title` and `imdb` fields in the returned document
-        projection: { _id: 0, title: 1, imdb: 1 },
+        projection: { _id: 0, title: 1, price: 1, img: 1 },
       };
-      const result = await productCollection.findOne(query);
+      const result = await productCollection.findOne(query, options);
       res.send(result);
     });
     //  mytoys
     app.get("/mytoys", async (req, res) => {
-      console.log(req.query);
-      const result = await toysCollection.find().toArray();
-      res.send(result);
-
+      console.log(req.query.email);
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email };
+      }
+      const result = await toysCollection.find(query).toArray();
       res.send(result);
     });
 
@@ -69,6 +71,13 @@ async function run() {
       const orders = req.body;
       console.log(orders);
       const result = await toysCollection.insertOne(orders);
+      res.send(result);
+    });
+
+    app.delete("/mytoys/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toysCollection.deleteOne(query);
       res.send(result);
     });
     // Send a ping to confirm a successful connection
