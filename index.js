@@ -40,7 +40,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/product/:id/details", async (req, res) => {
+    app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const options = {
@@ -69,18 +69,24 @@ async function run() {
 
     // Update
     app.patch("/myToys/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
-      const updatedBooking = req.body;
-      console.log(updatedBooking);
-      const updateDoc = {
-        $set: {
-          status: updatedBooking.status,
-        },
-      };
-      const result = await toysCollection.updateOne(filter, updateDoc);
-      res.send(result);
-    });
+      try {
+         const id = req.params.id;
+         const filter = { _id: new ObjectId(id) };
+         const updatedBooking = req.body;
+         console.log(updatedBooking);
+         const updateDoc = {
+            $set: {
+               ...updatedBooking,
+            },
+         };
+         const result = await toysCollection.updateOne(filter, updateDoc);
+         res.send(result);
+      } catch (error) {
+         console.error(error);
+         res.status(500).send("Internal Server Error");
+      }
+   });
+   
 
     app.delete("/myToys/:id", async (req, res) => {
       const id = req.params.id;
