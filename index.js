@@ -40,6 +40,25 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/toySearchByName/:name", async (req, res) => {
+      try {
+        const name = req.params.name;
+        console.log("Search request received for:", name);
+
+        const query = { name: { $regex: name, $options: "i" } }; // Case-insensitive search
+        const result = await productCollection.find(query).toArray();
+
+        if (result.length === 0) {
+          return res.status(404).json({ message: "No matching toys found" });
+        }
+
+        res.json(result);
+      } catch (error) {
+        console.error("Error fetching toys by name:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+    });
+
     app.get("/product/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -70,23 +89,22 @@ async function run() {
     // Update
     app.patch("/myToys/:id", async (req, res) => {
       try {
-         const id = req.params.id;
-         const filter = { _id: new ObjectId(id) };
-         const updatedBooking = req.body;
-         console.log(updatedBooking);
-         const updateDoc = {
-            $set: {
-               ...updatedBooking,
-            },
-         };
-         const result = await toysCollection.updateOne(filter, updateDoc);
-         res.send(result);
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const updatedBooking = req.body;
+        console.log(updatedBooking);
+        const updateDoc = {
+          $set: {
+            ...updatedBooking,
+          },
+        };
+        const result = await toysCollection.updateOne(filter, updateDoc);
+        res.send(result);
       } catch (error) {
-         console.error(error);
-         res.status(500).send("Internal Server Error");
+        console.error(error);
+        res.status(500).send("Internal Server Error");
       }
-   });
-   
+    });
 
     app.delete("/myToys/:id", async (req, res) => {
       const id = req.params.id;
