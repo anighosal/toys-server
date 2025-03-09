@@ -24,6 +24,7 @@ async function run() {
   try {
     // Connect the client to the server (optional starting in v4.7)
     await client.connect();
+    const usersCollection = client.db("animalToys").collection("users");
     const productCollection = client.db("animalToys").collection("products");
     const toysCollection = client.db("animalToys").collection("myToys");
 
@@ -45,7 +46,7 @@ async function run() {
         const name = req.params.name;
         console.log("Search request received for:", name);
 
-        const query = { name: { $regex: name, $options: "i" } }; // Case-insensitive search
+        const query = { name: { $regex: name, $options: "i" } };
         const result = await productCollection.find(query).toArray();
 
         if (result.length === 0) {
